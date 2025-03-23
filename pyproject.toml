@@ -1,0 +1,64 @@
+[build-system]
+requires = ["setuptools >= 61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+version = "2025.1"
+name = "benekli"
+dependencies = [
+  "pillow"
+]
+requires-python = ">= 3.12"
+authors = [
+  {name = "Mete Balci", email = "metebalci@gmail.com"},
+]
+description = "tool to investigate the effect of color profile"
+readme = {file = "README.md", content-type = "text/markdown"}
+keywords = ["color management"]
+classifiers = [
+  'Development Status :: 3 - Alpha',
+  'Environment :: Console',
+  'License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)',
+  'Programming Language :: Python :: 3.12',
+  'Topic :: Utilities',
+]
+
+[project.optional-dependencies]
+dev = [
+  "setuptools >= 61.0",
+  "black",
+  "pylint",
+  "mypy",
+  "build",
+  "twine",
+  "reuse"
+]
+
+[project.scripts]
+benekli = "benekli.benekli:run"
+
+[project.urls]
+Homepage = "https://github.com/metebalci/benekli"
+Documentation = "https://github.com/metebalci/benekli"
+Repository = "https://github.com/metebalci/benekli.git"
+Issues = "https://github.com/metebalci/benekli/issues"
+Changelog = "https://github.com/metebalci/benekli/blob/master/README.md"
+
+[tool.setuptools]
+packages = ["benekli"]
+
+[tool.black]
+line-length = 88
+target-version = ['py312']
+
+[tool.pylint]
+disable = [
+  "unknown-option-value", 
+  "missing-module-docstring", 
+  "missing-class-docstring",
+  "missing-function-docstring",
+]
+
+[tool.mypy]
+python_version = "3.12"
+check_untyped_defs = true
