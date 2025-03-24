@@ -8,7 +8,7 @@ import logging
 import sys
 from typing import Callable
 
-from PIL import Image, ImageCms
+from PIL import features, Image, ImageCms
 
 from .constants import PCS_illuminant_nXYZ
 from .formulas import ColorTriple
@@ -29,25 +29,25 @@ def err(s):
 class CommandOptions:
 
     def __init__(self):
+        self.bpc = False
         self.de_formula = "cie76"
         self.de_filename = None
         self.display_profile_filename = None
+        self.gamut_check = False
         self.input_filename = None
         self.input_profile_filename = None
-        self.no_bpc = False
-        self.no_gamut_check = False
         self.output_filename = None
         self.rendering_intent = "p"
         self.simulated_profile_filename = None
 
     def load_from_args(self, args):
+        self.bpc = args.bpc
         self.de_formula = args.de_formula
         self.de_filename = args.output_de
         self.display_profile_filename = args.display_profile
+        self.gamut_check = args.gamut_check
         self.input_filename = args.input_image
         self.input_profile_filename = args.input_profile
-        self.no_bpc = args.no_bpc
-        self.no_gamut_check = args.no_gamut_check
         self.output_filename = args.output_image
         self.rendering_intent = args.rendering_intent
         self.simulated_profile_filename = args.simulated_profile
@@ -289,21 +289,22 @@ def run_with_opts(opts: CommandOptions):
             renderingIntent=ImageCms.Intent.ABSOLUTE_COLORIMETRIC,
             proofRenderingIntent=opts.get_rendering_intent(),
             flags=(
-                (ImageCms.Flags.SOFTPROOFING)
-                | (0 if opts.no_bpc else ImageCms.Flags.BLACKPOINTCOMPENSATION)
-                | (0 if opts.no_gamut_check else ImageCms.Flags.GAMUTCHECK)
+                (ImageCms.Flags.SOFTPROOFING) |
+                (ImageCms.Flags.BLACKPOINTCOMPENSATION if opts.bpc else 0) |
+                (ImageCms.Flags.GAMUTCHECK if opts.gamut_check else 0)
             ),
         )
 
-        print("processing color transform...")
-
         output_image = cms_transform.point(input_image)
-        output_image.save(opts.output_filename)
+        output_image.save(
+            opts.output_filename, 
+            description="benekli soft proof image",
+            compression="tiff_lzw",
+            keep_rgb=True)
         print("soft proof generated: %s" % opts.output_filename)
 
         # de requested ?
         if opts.de_filename is not None:
-            print("calculating deltaE...")
             # convert input image to Lab if required
             if input_image.mode == "LAB":
                 input_image_Lab = input_image
@@ -337,6 +338,8 @@ def run_with_opts(opts: CommandOptions):
             # set keep_rgb so when saving JPG, it is not saved as YCbCr
             de_image.save(
                 opts.de_filename,
+                description="benekli delta E color difference image",
+                compression="tiff_lzw",
                 keep_rgb=True,
                 icc_profile=ImageCms.ImageCmsProfile(
                     ImageCms.createProfile("sRGB")
@@ -348,6 +351,12 @@ def run_with_opts(opts: CommandOptions):
 def run():
     opts = CommandOptions()
     parser = argparse.ArgumentParser(prog="benekli")
+    parser.add_argument(
+        "--bpc",
+        help="enable black point compensation (default: %s)" % opts.bpc,
+        default=False,
+        action="store_true",
+    )
     parser.add_argument(
         "-d",
         "--display-profile",
@@ -362,6 +371,13 @@ def run():
         default=opts.de_formula,
     )
     parser.add_argument(
+        "-g",
+        "--gamut-check",
+        help="enable gamut check (default: %s)" % opts.gamut_check,
+        default=opts.gamut_check,
+        action="store_true",
+    )
+    parser.add_argument(
         "-i",
         "--input-image",
         metavar="FILENAME",
@@ -374,18 +390,6 @@ def run():
         help="input profile to use (overrides embedded profile in input image)",
     )
     parser.add_argument(
-        "--no-bpc",
-        help="disable black point compensation (default: false)",
-        default=False,
-        action="store_true",
-    )
-    parser.add_argument(
-        "--no-gamut-check",
-        help="disable gamut check (default: false)",
-        default=False,
-        action="store_true",
-    )
-    parser.add_argument(
         "-o", "--output-image", metavar="FILENAME", help="output image", required=True
     )
     parser.add_argument(
@@ -395,9 +399,8 @@ def run():
         "-r",
         "--rendering-intent",
         choices=["p", "r", "s", "a"],
-        help="rendering intent, p(erceptual), r(elative) colorimetric, s(aturation) or a(bsolute) colorimetric (default: %s)"
-        % opts.rendering_intent,
-        default=opts.rendering_intent,
+        help="rendering intent, p(erceptual), r(elative) colorimetric, s(aturation) or a(bsolute) colorimetric",
+        required=True
     )
     parser.add_argument(
         "-s",
@@ -432,6 +435,16 @@ def run():
     logging.getLogger("benekli").setLevel(logging_level)
 
     logger.info(args)
+    logger.debug("Pillow supported modeles: %s" % ",".join(features.get_supported()))
+    if not features.check("littlecms2"):
+        err("littlecms2 module is not available")
+
+    if not features.check("libtiff"):
+        err("libtiff module is not available")
+
+    if not features.check("jpg"):
+        logger.warning("jpg module is not available")
+
     opts.load_from_args(args)
     run_with_opts(opts)
     return 0
