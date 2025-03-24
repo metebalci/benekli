@@ -36,6 +36,13 @@ To soft proof Bill Atkinson's Fourteen Balls test image (which is an extreme exa
 
 ```
 $ benekli -v -s SC-P800\ Series\ Epson\ Archival\ Matte.icc -d display.icc -i FourteenBalls.tif -o FourteenBalls.p.bpc.tif -r p --bpc
+
+ INFO:     benekli.py: input image is RGB
+ INFO:     benekli.py: using the embedded profile in FourteenBalls.tif
+ INFO:     benekli.py: image profile: ProPhoto RGB
+ INFO:     benekli.py: simulated profile: SC-P800 Series Epson Archival Matte
+ INFO:     benekli.py: display profile: SW271 1_D50_L100_G22_2025-03-18T14.58.41Z
+soft proof generated: FourteenBalls.p.bpc.tif
 ```
 
 generates FourteenBalls.p.bpc.tif soft proof.

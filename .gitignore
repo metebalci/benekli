@@ -3,5 +3,6 @@
 *.jpg
 *.icc
 **/.DS_STORE
-benekli.egg-info
-benekli/__pycache__
+benekli.egg-info/
+benekli/__pycache__/
+dist/

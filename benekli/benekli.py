@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 import argparse
+import importlib.metadata
 import io
 import logging
 import sys
@@ -416,25 +417,27 @@ def run():
         action="count",
         default=0,
     )
-
+    parser.add_argument(
+        "--version",
+        action="version",
+        version=importlib.metadata.version("benekli")
+    )
     args = parser.parse_args()
-
     logging_format = "%(levelname)5s:%(filename)15s: %(message)s"
-
     logging.basicConfig(
         filename=log_file if False else None,
         level=logging.WARNING,
         format=logging_format,
     )
-
     logging_level = logging.WARNING
     if args.verbose >= 2:
         logging_level = logging.DEBUG
+
     elif args.verbose >= 1:
         logging_level = logging.INFO
-    logging.getLogger("benekli").setLevel(logging_level)
 
-    logger.info(args)
+    logging.getLogger("benekli").setLevel(logging_level)
+    logger.debug(args)
     logger.debug("Pillow supported modeles: %s" % ",".join(features.get_supported()))
     if not features.check("littlecms2"):
         err("littlecms2 module is not available")
