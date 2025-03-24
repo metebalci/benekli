@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2025 Mete Balci
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 import argparse
 import io
 import logging

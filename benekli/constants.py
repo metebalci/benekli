@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2025 Mete Balci
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 # name => (cie 1931 2 deg: x, y) (cie 1964 10 deg: x, y) (cct)]
 STANDARD_ILLUMINANTS_xy = {
     # A=incandescent/tungsten
