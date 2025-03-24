@@ -1,0 +1,7 @@
+*.psd
+*.tif
+*.jpg
+*.icc
+**/.DS_STORE
+benekli.egg-info
+benekli/__pycache__
