@@ -40,7 +40,7 @@ $ benekli -v -s SC-P800\ Series\ Epson\ Archival\ Matte.icc -d display.icc -i Fo
 
 generates FourteenBalls.p.bpc.tif soft proof.
 
-Be aware that what you will see below will be different depending on how wide the color gamut of your display is. I am checking these on a wide-gamut display with ~100% AdobeRGB coverage. You can test your display at (wide-gamut test page](https://www.wide-gamut.com/test).
+Be aware that what you will see below will be different depending on how wide the color gamut of your display is. I am checking these on a wide-gamut display with ~100% AdobeRGB coverage. You can test your display at [wide-gamut test page](https://www.wide-gamut.com/test).
 
 ![Fourteen Balls test image by Bill Atkinson](FourteenBalls.tif)
 
