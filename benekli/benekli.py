@@ -143,18 +143,30 @@ def de_colorizer(de):
 
 
 def create_de_image(
-    de_formula: Callable[[ColorTriple, ColorTriple], float], im1: Image, im2: Image
-) -> Image:
+    de_formula: Callable[[ColorTriple, ColorTriple], float], im1, im2
+):
+    """Create a color difference image between two Lab images."""
     assert im1.mode == "LAB"
     assert im2.mode == "LAB"
     assert im1.size == im2.size
+    width, height = im1.size
+    
+    import numpy as np
+    out = np.zeros((height, width, 3), dtype=np.uint8)
+    
     data1 = im1.getdata()
     data2 = im2.getdata()
-    for i in range(0, im1.width * im1.height):
+    
+    for i in range(len(data1)):
         Lab1 = data1[i]
         Lab2 = data2[i]
         de = de_formula(Lab1, Lab2)
+        
+        y = i // width
+        x = i % width
+        
         out[y, x] = de_colorizer(de)
+        
     return Image.fromarray(out, mode="RGB")
 
 
@@ -297,12 +309,14 @@ def run_with_opts(opts: CommandOptions):
         )
 
         output_image = cms_transform.point(input_image)
-        output_image.save(
-            opts.output_filename, 
-            description="benekli soft proof image",
-            compression="tiff_lzw",
-            keep_rgb=True)
-        print("soft proof generated: %s" % opts.output_filename)
+        
+        if opts.output_filename is not None:
+            output_image.save(
+                opts.output_filename, 
+                description="benekli soft proof image",
+                compression="tiff_lzw",
+                keep_rgb=True)
+            print("soft proof generated: %s" % opts.output_filename)
 
         # de requested ?
         if opts.de_filename is not None:
@@ -391,7 +405,7 @@ def run():
         help="input profile to use (overrides embedded profile in input image)",
     )
     parser.add_argument(
-        "-o", "--output-image", metavar="FILENAME", help="output image", required=True
+        "-o", "--output-image", metavar="FILENAME", help="output proof image"
     )
     parser.add_argument(
         "-q", "--output-de", metavar="FILENAME", help="output delta E image"
@@ -449,6 +463,10 @@ def run():
         logger.warning("jpg module is not available")
 
     opts.load_from_args(args)
+    
+    if opts.output_filename is None and opts.de_filename is None:
+        err("At least one of -o (output proof image) or -q (output delta E image) must be specified")
+    
     run_with_opts(opts)
     return 0
 
