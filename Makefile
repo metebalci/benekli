@@ -1,9 +1,12 @@
 
-.PHONY: test reuse test-proof upload
+.PHONY: test reuse test-proof test-unit upload
 
 test:
 	black --check benekli
 	pylint benekli
+
+test-unit:
+	python -m unittest discover tests
 
 reuse:
 	reuse annotate --style python --merge-copyrights --license=GPL-3.0-or-later --copyright="Mete Balci" --year 2025 -r benekli
