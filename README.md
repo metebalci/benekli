@@ -26,7 +26,7 @@ The availability of the required Pillow modules: littlecms2, libtiff and jpg are
 
 # Usage
 
-The repository contains [a scaled down version of Bill Atkinson's Fourteen Balls test image](FourteenBalls.tif)
+The repository contains a scaled down version of Bill Atkinson's Fourteen Balls test image ([TIFF with embedded ProPhoto RGB profile](FourteenBalls.tif), [PNG preview](FourteenBalls.png))
 
 To soft proof Fourteen Balls test image (which is an extreme example in ProPhoto RGB color space) simulating my printer (Epson SC-P800) using Epson Archival Matte paper (SC-P800...Matte.icc) on my display (BenQ SW271, display.icc):
 
@@ -45,13 +45,13 @@ generates FourteenBalls.p.bpc.tif soft proof image.
 
 Be aware that what you will see below will be different depending on how wide the color gamut of your display is. I am checking these on a wide-gamut display with ~100% AdobeRGB coverage. You can test your display at [wide-gamut test page](https://www.wide-gamut.com/test).
 
-Fourteen Balls:
+Fourteen Balls (PNG preview shown inline; original [TIFF](FourteenBalls.tif) is in the repository):
 
-![Fourteen Balls test image by Bill Atkinson](FourteenBalls.tif)
+![Fourteen Balls test image by Bill Atkinson](FourteenBalls.png)
 
-Fourteen Balls soft proof image using Perceptual rendering intent (-r p) with Black Point Compensation (--bpc):
+Fourteen Balls soft proof image using Perceptual rendering intent (-r p) with Black Point Compensation (--bpc) (PNG preview shown inline; original [TIFF](FourteenBalls.p.bpc.tif) is in the repository):
 
-![Fourteen Balls soft proof with perceptual rendering intent and black point compensation](FourteenBalls.p.bpc.tif)
+![Fourteen Balls soft proof with perceptual rendering intent and black point compensation](FourteenBalls.p.bpc.png)
 
 # License
 
